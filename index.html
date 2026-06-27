@@ -3,25 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bloom — développeur</title>
+<title>Bloom — dev</title>
 <meta name="description" content="Portfolio de Bloom, développeur.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #1a1a1d;
-    --bg-card: #232326;
-    --cream: #e8e3d8;
-    --cream-dim: #a8a39a;
-    --rust: #c44536;
-    --rust-dim: #8a3329;
-    --sage: #5a5d52;
-    --line: #34343a;
+    --bg: #121214;
+    --bg-card: #1c1c1f;
+    --cream: #f2f0ea;
+    --cream-dim: #9b9892;
+    --red: #ff3b30;
+    --red-dim: #b8281f;
+    --gray: #6b6b6b;
+    --line: #2c2c30;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
-
   html{ scroll-behavior:smooth; }
 
   body{
@@ -32,222 +31,168 @@
     overflow-x:hidden;
   }
 
-  ::selection{ background:var(--rust); color:var(--cream); }
-
+  ::selection{ background:var(--red); color:#fff; }
   a{ color:inherit; text-decoration:none; }
 
-  .noise{
+  .grain{
     position:fixed; inset:0; pointer-events:none; z-index:1;
-    opacity:0.035; mix-blend-mode:overlay;
+    opacity:0.05; mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  .wrap{ max-width:760px; margin:0 auto; padding:0 28px; position:relative; z-index:2; }
+  .wrap{ max-width:760px; margin:0 auto; padding:0 24px; position:relative; z-index:2; }
 
+  /* doodle underline réutilisable */
+  .doodle{ position:relative; display:inline-block; }
+  .doodle svg{
+    position:absolute; left:-4%; right:-4%; bottom:-0.12em; width:108%; height:0.4em;
+    overflow:visible;
+  }
+
+  /* NAV */
   header.nav{
     position:fixed; top:0; left:0; right:0; z-index:50;
     backdrop-filter:blur(6px);
-    background:rgba(26,26,29,0.7);
-    border-bottom:1px solid var(--line);
+    background:rgba(18,18,20,0.75);
+    border-bottom:1px dashed var(--line);
   }
   header.nav .wrap{
-    display:flex; justify-content:space-between; align-items:center;
-    height:62px;
+    display:flex; justify-content:space-between; align-items:center; height:60px;
   }
   .logo{
-    font-family:'Fraunces', serif; font-style:italic; font-weight:500;
-    font-size:1.15rem; letter-spacing:0.02em;
+    font-family:'Kalam', cursive; font-weight:700; font-size:1.3rem;
+    transform:rotate(-2deg); display:inline-block;
   }
-  .logo span{ color:var(--rust); font-style:normal; }
-  nav.links{ display:flex; gap:28px; font-size:0.78rem; }
-  nav.links a{
-    color:var(--cream-dim); position:relative; transition:color 0.25s;
-  }
-  nav.links a:hover{ color:var(--cream); }
-  nav.links a::after{
-    content:''; position:absolute; left:0; bottom:-5px; width:0; height:1px;
-    background:var(--rust); transition:width 0.25s;
-  }
-  nav.links a:hover::after{ width:100%; }
+  .logo span{ color:var(--red); }
+  nav.links{ display:flex; gap:26px; font-size:0.78rem; }
+  nav.links a{ color:var(--cream-dim); transition:color 0.2s; }
+  nav.links a:hover{ color:var(--red); }
 
   /* HERO */
   .hero{
-    min-height:92vh; display:flex; flex-direction:column; justify-content:center;
-    padding-top:62px;
+    min-height:90vh; display:flex; flex-direction:column; justify-content:center;
+    padding-top:60px; position:relative;
   }
-  .eyebrow{
-    font-size:0.78rem; color:var(--sage); letter-spacing:0.08em;
-    text-transform:uppercase; margin-bottom:18px;
-    display:flex; align-items:center; gap:10px;
+  .hero-tag{
+    font-family:'Kalam', cursive; font-size:1rem; color:var(--red);
+    transform:rotate(-2deg); display:inline-block; margin-bottom:14px;
+    border:2px dashed var(--red); padding:5px 14px; border-radius:30px;
+    width:fit-content;
   }
-  .eyebrow::before{
-    content:''; width:7px; height:7px; border-radius:50%;
-    background:var(--rust); display:inline-block;
-    animation:pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-
   h1{
-    font-family:'Fraunces', serif; font-weight:400;
-    font-size:clamp(2.4rem, 6.5vw, 4.2rem);
-    line-height:1.05; letter-spacing:-0.01em;
-    margin-bottom:28px;
+    font-family:'Kalam', cursive; font-weight:700;
+    font-size:clamp(2.6rem, 8vw, 4.6rem);
+    line-height:1.05; margin-bottom:22px;
   }
-  h1 .italic{ font-style:italic; color:var(--rust); font-weight:350; }
-  h1 .strike{
-    position:relative; color:var(--cream-dim); font-size:0.62em;
-    display:inline-block; margin:0 0.15em;
-  }
-  h1 .strike::after{
-    content:''; position:absolute; left:-2%; right:-2%; top:50%;
-    height:2px; background:var(--rust-dim); transform:rotate(-3deg);
-  }
-
+  h1 .hl{ color:var(--red); transform:rotate(-1deg); display:inline-block; }
   .hero-sub{
-    font-size:1rem; color:var(--cream-dim); max-width:520px; margin-bottom:38px;
+    font-size:1rem; color:var(--cream-dim); max-width:480px; margin-bottom:34px;
   }
-  .hero-sub strong{ color:var(--cream); font-weight:700; }
+  .hero-sub strong{ color:var(--cream); }
 
-  .cta-row{ display:flex; gap:16px; flex-wrap:wrap; }
+  .cta-row{ display:flex; gap:14px; flex-wrap:wrap; }
   .btn{
-    font-family:'Space Mono', monospace; font-size:0.82rem;
-    padding:13px 24px; border-radius:3px; border:1px solid var(--line);
-    transition:all 0.25s; cursor:pointer; background:none;
+    font-family:'Space Mono', monospace; font-size:0.82rem; font-weight:700;
+    padding:13px 26px; border-radius:30px; border:2px solid var(--line);
+    transition:transform 0.2s, border-color 0.2s, background 0.2s; cursor:pointer; background:none;
+    color:var(--cream);
   }
-  .btn-primary{ background:var(--rust); border-color:var(--rust); color:var(--bg); font-weight:700; }
-  .btn-primary:hover{ background:var(--cream); border-color:var(--cream); }
-  .btn-ghost{ color:var(--cream-dim); }
-  .btn-ghost:hover{ border-color:var(--cream-dim); color:var(--cream); }
+  .btn:hover{ transform:rotate(-1deg) scale(1.03); }
+  .btn-primary{ background:var(--red); border-color:var(--red); color:#0c0c0d; }
+  .btn-primary:hover{ background:#ff5147; }
+  .btn-ghost:hover{ border-color:var(--red); color:var(--red); }
 
-  /* SECTION GENERIC */
-  section{ padding:90px 0; border-top:1px solid var(--line); }
-  .sec-head{ margin-bottom:48px; }
-  .sec-num{
-    font-size:0.75rem; color:var(--sage); display:block; margin-bottom:8px;
+  .hero-scribble{
+    position:absolute; right:10px; top:18%; width:90px; opacity:0.5;
+    display:none;
+  }
+  @media (min-width:760px){ .hero-scribble{ display:block; } }
+
+  /* SECTIONS */
+  section{ padding:80px 0; border-top:1px dashed var(--line); }
+  .sec-head{ margin-bottom:42px; }
+  .sec-tag{
+    font-family:'Kalam', cursive; font-size:0.95rem; color:var(--gray);
+    margin-bottom:6px; display:block;
   }
   h2{
-    font-family:'Fraunces', serif; font-style:italic; font-weight:400;
-    font-size:1.9rem; color:var(--cream);
+    font-family:'Kalam', cursive; font-weight:700; font-size:2rem;
+    transform:rotate(-1deg); display:inline-block;
   }
 
   /* ABOUT */
-  .about-grid{ display:grid; grid-template-columns:1fr; gap:28px; }
-  .about-text p{ color:var(--cream-dim); margin-bottom:18px; font-size:0.95rem; }
+  .about-text p{ color:var(--cream-dim); margin-bottom:16px; font-size:0.95rem; }
   .about-text strong{ color:var(--cream); }
-  .tags{ display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
+  .tags{ display:flex; flex-wrap:wrap; gap:9px; margin-top:22px; }
   .tag{
-    font-size:0.74rem; padding:6px 12px; border:1px solid var(--line);
-    border-radius:20px; color:var(--cream-dim);
+    font-size:0.74rem; padding:7px 14px; border:2px solid var(--line);
+    border-radius:30px; color:var(--cream-dim);
+    transform:rotate(var(--r, 0deg));
   }
+  .tag:nth-child(odd){ transform:rotate(-1.5deg); }
+  .tag:nth-child(even){ transform:rotate(1.5deg); }
 
   /* PROJECTS */
   .project{
-    border:1px solid var(--line); border-radius:6px; padding:30px;
-    margin-bottom:22px; background:var(--bg-card);
-    transition:border-color 0.3s, transform 0.3s;
-    position:relative; overflow:hidden;
+    border:2px solid var(--line); border-radius:14px; padding:26px;
+    margin-bottom:24px; background:var(--bg-card);
+    transition:border-color 0.25s, transform 0.25s;
+    position:relative;
   }
-  .project::before{
-    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
-    background:var(--rust-dim); transition:background 0.3s;
-  }
-  .project:hover{ border-color:var(--sage); transform:translateX(4px); }
-  .project:hover::before{ background:var(--rust); }
+  .project:nth-child(even){ transform:rotate(0.4deg); }
+  .project:nth-child(odd){ transform:rotate(-0.4deg); }
+  .project:hover{ border-color:var(--red); transform:rotate(0deg) translateY(-3px); }
+
   .project-top{
-    display:flex; justify-content:space-between; align-items:baseline;
-    margin-bottom:12px; gap:16px; flex-wrap:wrap;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    margin-bottom:10px; gap:14px; flex-wrap:wrap;
   }
   .project-title{
-    font-family:'Fraunces', serif; font-size:1.25rem; font-weight:500;
+    font-family:'Kalam', cursive; font-size:1.35rem; font-weight:700;
   }
   .project-status{
-    font-size:0.7rem; color:var(--sage); white-space:nowrap;
-    text-transform:uppercase; letter-spacing:0.05em;
+    font-size:0.68rem; color:var(--red); white-space:nowrap;
+    text-transform:uppercase; letter-spacing:0.04em; border:1px solid var(--red-dim);
+    padding:3px 9px; border-radius:20px; margin-top:4px;
   }
-  .project-desc{ color:var(--cream-dim); font-size:0.9rem; margin-bottom:16px; }
+  .project-desc{ color:var(--cream-dim); font-size:0.9rem; margin-bottom:14px; }
   .project-desc code{
-    font-family:'Space Mono', monospace; background:var(--bg); color:var(--rust);
+    font-family:'Space Mono', monospace; background:var(--bg); color:var(--red);
     padding:2px 6px; border-radius:3px; border:1px solid var(--line); font-size:0.85em;
   }
   .project-stack{ display:flex; gap:8px; flex-wrap:wrap; }
   .stack-item{
-    font-size:0.7rem; color:var(--sage); border:1px solid var(--line);
-    padding:3px 9px; border-radius:3px;
+    font-size:0.7rem; color:var(--gray); border:1px dashed var(--line);
+    padding:3px 9px; border-radius:20px;
   }
+
   .project-media{
-    margin-top:18px; border-radius:4px; overflow:hidden;
-    border:1px solid var(--line); background:#000;
+    margin-top:16px; border-radius:10px; overflow:hidden;
+    border:2px solid var(--line); background:#000;
     aspect-ratio:16/9; position:relative;
   }
   .project-media.empty{
     display:flex; align-items:center; justify-content:center;
-    color:var(--sage); font-size:0.74rem; flex-direction:column; gap:6px;
-    background:repeating-linear-gradient(45deg, var(--bg-card), var(--bg-card) 10px, #1f1f22 10px, #1f1f22 20px);
+    color:var(--gray); font-size:0.78rem; flex-direction:column; gap:6px;
+    background:repeating-linear-gradient(45deg, var(--bg-card), var(--bg-card) 10px, #232326 10px, #232326 20px);
+    font-family:'Kalam', cursive;
   }
 
   .carousel{ position:relative; width:100%; height:100%; overflow:hidden; }
-  .carousel-track{
-    display:flex; height:100%; transition:transform 0.35s ease;
-    touch-action:pan-y;
-  }
-  .carousel-slide{
-    flex:0 0 100%; height:100%; display:flex; align-items:center; justify-content:center;
-  }
+  .carousel-track{ display:flex; height:100%; transition:transform 0.35s ease; touch-action:pan-y; }
+  .carousel-slide{ flex:0 0 100%; height:100%; display:flex; align-items:center; justify-content:center; }
   .carousel-slide img, .carousel-slide video{
-    width:100%; height:100%; object-fit:cover; display:block;
-    cursor:zoom-in;
-  }
-
-  .lightbox{
-    position:fixed; inset:0; z-index:1000; background:rgba(10,10,11,0.92);
-    display:flex; align-items:center; justify-content:center;
-    opacity:0; pointer-events:none; transition:opacity 0.25s ease;
-    padding:30px;
-  }
-  .lightbox.open{ opacity:1; pointer-events:auto; }
-  .lightbox-content{
-    max-width:92vw; max-height:88vh; display:flex; align-items:center; justify-content:center;
-  }
-  .lightbox-content img, .lightbox-content video{
-    max-width:92vw; max-height:88vh; width:auto; height:auto;
-    object-fit:contain; border-radius:4px; box-shadow:0 20px 60px rgba(0,0,0,0.5);
-  }
-  .lightbox-close{
-    position:absolute; top:18px; right:24px; z-index:1001;
-    width:40px; height:40px; border-radius:50%;
-    background:rgba(35,35,38,0.85); border:1px solid var(--line);
-    color:var(--cream); font-size:1.3rem; display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition:background 0.25s, border-color 0.25s;
-  }
-  .lightbox-close:hover{ background:var(--rust); border-color:var(--rust); }
-
-  .lightbox-arrow{
-    position:absolute; top:50%; transform:translateY(-50%); z-index:1001;
-    width:52px; height:52px; border-radius:50%;
-    background:rgba(35,35,38,0.7); border:1px solid var(--line);
-    color:#fff; font-size:1.7rem; display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition:background 0.25s, border-color 0.25s, transform 0.25s;
-    user-select:none;
-  }
-  .lightbox-arrow:hover{ background:var(--rust); border-color:var(--rust); }
-  .lightbox-arrow.prev{ left:18px; }
-  .lightbox-arrow.next{ right:18px; }
-  .lightbox.single .lightbox-arrow{ display:none; }
-
-  @media (max-width:640px){
-    .lightbox-arrow{ width:42px; height:42px; font-size:1.4rem; }
-    .lightbox-arrow.prev{ left:8px; }
-    .lightbox-arrow.next{ right:8px; }
+    width:100%; height:100%; object-fit:cover; display:block; cursor:zoom-in;
   }
   .carousel-arrow{
     position:absolute; top:50%; transform:translateY(-50%); z-index:5;
     width:34px; height:34px; border-radius:50%;
-    background:rgba(26,26,29,0.65); border:1px solid var(--line);
-    color:var(--cream); display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:1rem; transition:background 0.25s, border-color 0.25s;
+    background:rgba(18,18,20,0.7); border:2px solid var(--line);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:1rem; transition:background 0.2s, border-color 0.2s;
     user-select:none;
   }
-  .carousel-arrow:hover{ background:var(--rust); border-color:var(--rust); }
+  .carousel-arrow:hover{ background:var(--red); border-color:var(--red); }
   .carousel-arrow.prev{ left:10px; }
   .carousel-arrow.next{ right:10px; }
   .carousel-dots{
@@ -255,37 +200,71 @@
     display:flex; justify-content:center; gap:7px;
   }
   .carousel-dot{
-    width:7px; height:7px; border-radius:50%; background:rgba(232,227,216,0.35);
-    cursor:pointer; transition:background 0.25s, transform 0.25s; border:none;
+    width:7px; height:7px; border-radius:50%; background:rgba(242,240,234,0.35);
+    cursor:pointer; transition:background 0.2s, transform 0.2s; border:none;
   }
-  .carousel-dot.active{ background:var(--rust); transform:scale(1.25); }
-  .carousel:has(.carousel-slide:only-child) .carousel-arrow,
-  .carousel:has(.carousel-slide:only-child) .carousel-dots{ display:none; }
+  .carousel-dot.active{ background:var(--red); transform:scale(1.3); }
+
+  /* LIGHTBOX */
+  .lightbox{
+    position:fixed; inset:0; z-index:1000; background:rgba(6,6,7,0.94);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity 0.25s ease; padding:30px;
+  }
+  .lightbox.open{ opacity:1; pointer-events:auto; }
+  .lightbox-content{ max-width:92vw; max-height:88vh; display:flex; align-items:center; justify-content:center; }
+  .lightbox-content img, .lightbox-content video{
+    max-width:92vw; max-height:88vh; width:auto; height:auto;
+    object-fit:contain; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  }
+  .lightbox-close{
+    position:absolute; top:18px; right:24px; z-index:1001;
+    width:40px; height:40px; border-radius:50%;
+    background:rgba(28,28,31,0.9); border:2px solid var(--line);
+    color:var(--cream); font-size:1.3rem; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background 0.2s, border-color 0.2s;
+  }
+  .lightbox-close:hover{ background:var(--red); border-color:var(--red); }
+  .lightbox-arrow{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:1001;
+    width:52px; height:52px; border-radius:50%;
+    background:rgba(28,28,31,0.75); border:2px solid var(--line);
+    color:#fff; font-size:1.7rem; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background 0.2s, border-color 0.2s; user-select:none;
+  }
+  .lightbox-arrow:hover{ background:var(--red); border-color:var(--red); }
+  .lightbox-arrow.prev{ left:18px; }
+  .lightbox-arrow.next{ right:18px; }
+  .lightbox.single .lightbox-arrow{ display:none; }
+  @media (max-width:640px){
+    .lightbox-arrow{ width:42px; height:42px; font-size:1.4rem; }
+    .lightbox-arrow.prev{ left:8px; }
+    .lightbox-arrow.next{ right:8px; }
+  }
 
   /* CONTACT */
   .contact-box{
-    border:1px solid var(--line); border-radius:6px; padding:40px;
-    background:var(--bg-card); text-align:left;
+    border:2px solid var(--line); border-radius:14px; padding:36px;
+    background:var(--bg-card); text-align:left; transform:rotate(-0.3deg);
   }
   .contact-line{
     display:flex; justify-content:space-between; align-items:center;
-    padding:16px 0; border-bottom:1px solid var(--line);
-    font-size:0.9rem;
+    padding:15px 0; border-bottom:1px dashed var(--line); font-size:0.9rem;
   }
   .contact-line:last-child{ border-bottom:none; }
-  .contact-label{ color:var(--sage); font-size:0.75rem; text-transform:uppercase; }
-  .contact-value{ color:var(--cream); transition:color 0.25s; }
-  .contact-line a:hover .contact-value{ color:var(--rust); }
+  .contact-label{ color:var(--gray); font-size:0.75rem; text-transform:uppercase; }
+  .contact-value{ color:var(--cream); transition:color 0.2s; }
+  .contact-line a:hover .contact-value{ color:var(--red); }
 
   footer{
-    padding:36px 0; text-align:center; font-size:0.74rem; color:var(--sage);
-    border-top:1px solid var(--line);
+    padding:32px 0; text-align:center; font-size:0.78rem; color:var(--gray);
+    border-top:1px dashed var(--line); font-family:'Kalam', cursive;
   }
 
   @media (max-width:640px){
     nav.links{ display:none; }
-    section{ padding:64px 0; }
-    .contact-box{ padding:26px; }
+    section{ padding:56px 0; }
+    .contact-box{ padding:24px; }
     .contact-line{ flex-direction:column; align-items:flex-start; gap:4px; }
   }
 
@@ -294,19 +273,19 @@
     html{ scroll-behavior:auto; }
   }
 
-  :focus-visible{ outline:2px solid var(--rust); outline-offset:3px; }
+  :focus-visible{ outline:2px solid var(--red); outline-offset:3px; }
 
-  .reveal{ opacity:0; transform:translateY(16px); transition:opacity 0.6s ease, transform 0.6s ease; }
+  .reveal{ opacity:0; transform:translateY(14px); transition:opacity 0.5s ease, transform 0.5s ease; }
   .reveal.in{ opacity:1; transform:translateY(0); }
 </style>
 </head>
 <body>
 
-<div class="noise"></div>
+<div class="grain"></div>
 
 <header class="nav">
   <div class="wrap">
-    <div class="logo">bloom<span>.</span>dev</div>
+    <div class="logo">bloom<span>.dev</span></div>
     <nav class="links">
       <a href="#about">à propos</a>
       <a href="#work">projets</a>
@@ -318,54 +297,52 @@
 <main class="wrap">
 
   <section class="hero" style="border-top:none;">
-    <p class="eyebrow">disponible — théoriquement</p>
+    <span class="hero-tag">✌️ dispo, sans stress</span>
     <h1>
-      Développeur. <span class="italic">Probablement</span> compétent.
-      <span class="strike">Sauve le monde</span><br>
-      Écrit du code qui marche, <em class="italic">parfois</em> du premier coup.
+      Salut, moi c'est <span class="hl">Bloom</span>.<br>
+      Je code des trucs qui marchent <br> (la plupart du temps).
     </h1>
     <p class="hero-sub">
-      Je suis <strong>Bloom</strong>, développeur. Je construis des trucs qui fonctionnent,
-      je débogue des trucs qui ne devraient pas être cassés, et j'ai une relation
-      compliquée avec les deadlines.
+      Développeur — j'aime construire des systèmes qui tiennent debout,
+      casser des trucs pour comprendre comment ils fonctionnent, et garder
+      ça simple quand je peux.
     </p>
     <div class="cta-row">
-      <a href="#work" class="btn btn-primary">Voir le travail</a>
-      <a href="mailto:laladineie@gmail.com" class="btn btn-ghost">Me contacter</a>
+      <a href="#work" class="btn btn-primary">Voir le taf</a>
+      <a href="mailto:laladineie@gmail.com" class="btn btn-ghost">Me parler</a>
     </div>
   </section>
 
   <section id="about">
     <div class="sec-head">
-      <span class="sec-num">à propos</span>
-      <h2>Un peu de contexte, sans trop en faire</h2>
+      <span class="sec-tag">à propos, en gros</span>
+      <h2>Sans trop se la raconter</h2>
     </div>
-    <div class="about-grid">
-      <div class="about-text reveal">
-        <p>
-          Je développe des outils et systèmes sur mesure — souvent sous pression,
-          parfois sans trop savoir où ça va, mais ça finit par tenir debout.
-          <strong>J'aime comprendre comment les choses cassent</strong> avant de
-          comprendre comment elles marchent.
-        </p>
-        <p>
-          Pas du genre à sur-vendre un projet. Si quelque chose ne fonctionne pas
-          encore, je le dis. Si ça marche, je suis presque aussi surpris que vous.
-        </p>
-        <div class="tags">
-          <span class="tag">Backend</span>
-          <span class="tag">Automatisation</span>
-          <span class="tag">Systèmes</span>
-          <span class="tag">Débogage compulsif</span>
-          <span class="tag">Optimisation</span>
-        </div>
+    <div class="about-text reveal">
+      <p>
+        Je développe des outils et systèmes sur mesure — souvent un peu sous
+        pression, parfois sans trop savoir où ça va au début, mais ça finit
+        par tenir debout. <strong>J'aime comprendre comment les choses
+        cassent</strong> avant de comprendre comment elles marchent.
+      </p>
+      <p>
+        Pas du genre à sur-vendre un projet. Si quelque chose marche pas
+        encore, je le dis. Si ça marche, je suis presque aussi surpris que
+        vous.
+      </p>
+      <div class="tags">
+        <span class="tag">Backend</span>
+        <span class="tag">Automatisation</span>
+        <span class="tag">Systèmes en jeu</span>
+        <span class="tag">Débogage compulsif</span>
+        <span class="tag">Optimisation</span>
       </div>
     </div>
   </section>
 
   <section id="work">
     <div class="sec-head">
-      <span class="sec-num">projets</span>
+      <span class="sec-tag">projets</span>
       <h2>Des trucs que j'ai construits</h2>
     </div>
 
@@ -375,8 +352,8 @@
         <span class="project-status">en prod</span>
       </div>
       <p class="project-desc">
-        Un système de réticule entièrement modulable en jeu : couleur, taille
-        et activation/désactivation directement via un menu, sans toucher à un
+        Un réticule entièrement modulable en jeu : couleur, taille et
+        activation/désactivation directement via un menu, sans toucher à un
         seul fichier de config.
       </p>
       <div class="project-stack">
@@ -385,7 +362,7 @@
         <span class="stack-item">Lua</span>
       </div>
       <div class="project-media empty" data-project="reticule">
-        <span>📷 Preview à venir</span>
+        <span>📷 preview à venir</span>
         <span>assets/reticule-1.jpg</span>
       </div>
     </div>
@@ -396,9 +373,9 @@
         <span class="project-status">en prod</span>
       </div>
       <p class="project-desc">
-        Des combats du 1 contre 1 jusqu'au 4 contre 4, avec des arènes que le
-        staff peut modifier directement en jeu — pas besoin de redémarrer le
-        serveur pour ajuster un spawn ou une zone.
+        Des combats du 1v1 jusqu'au 4v4, avec des arènes modifiables
+        directement en jeu par le staff — pas besoin de redémarrer le
+        serveur pour ajuster une zone.
       </p>
       <div class="project-stack">
         <span class="stack-item">PvP</span>
@@ -406,7 +383,7 @@
         <span class="stack-item">Outils staff</span>
       </div>
       <div class="project-media empty" data-project="arenes">
-        <span>📷 Preview à venir</span>
+        <span>📷 preview à venir</span>
         <span>assets/arenes-1.jpg</span>
       </div>
     </div>
@@ -418,8 +395,8 @@
       </div>
       <p class="project-desc">
         Des médailles équipables en jeu, pouvant donner des bonus actifs ou
-        rester purement cosmétiques selon le choix du créateur, géré via un
-        menu admin dédié.
+        rester cosmétiques selon le choix du créateur, géré via un menu
+        admin dédié.
       </p>
       <div class="project-stack">
         <span class="stack-item">Progression</span>
@@ -427,7 +404,7 @@
         <span class="stack-item">Système de boost</span>
       </div>
       <div class="project-media empty" data-project="medailles">
-        <span>📷 Preview à venir</span>
+        <span>📷 preview à venir</span>
         <span>assets/medailles-1.jpg</span>
       </div>
     </div>
@@ -439,8 +416,7 @@
       </div>
       <p class="project-desc">
         Une interface pour gérer l'accès à la radio textuelle en jeu, en
-        donnant ou retirant l'accès au système par job, sans passer par la
-        console.
+        donnant ou retirant l'accès par job, sans passer par la console.
       </p>
       <div class="project-stack">
         <span class="stack-item">Gestion par rôle</span>
@@ -448,7 +424,7 @@
         <span class="stack-item">Admin tools</span>
       </div>
       <div class="project-media empty" data-project="radioadmin">
-        <span>📷 Preview à venir</span>
+        <span>📷 preview à venir</span>
         <span>assets/radioadmin-1.jpg</span>
       </div>
     </div>
@@ -460,8 +436,8 @@
       </div>
       <p class="project-desc">
         Un système de commandes (comme <code>!models</code>) permettant à
-        chaque joueur de s'appliquer un modèle ou un ragdoll directement, sans
-        passer par le menu admin.
+        chaque joueur de s'appliquer un modèle ou un ragdoll directement,
+        sans passer par le menu admin.
       </p>
       <div class="project-stack">
         <span class="stack-item">Commandes chat</span>
@@ -469,7 +445,7 @@
         <span class="stack-item">Lua</span>
       </div>
       <div class="project-media empty" data-project="models">
-        <span>📷 Preview à venir</span>
+        <span>📷 preview à venir</span>
         <span>assets/models-1.jpg</span>
       </div>
     </div>
@@ -478,8 +454,8 @@
 
   <section id="contact">
     <div class="sec-head">
-      <span class="sec-num">contact</span>
-      <h2>On peut parler, si vous voulez</h2>
+      <span class="sec-tag">contact</span>
+      <h2>On peut parler, si tu veux</h2>
     </div>
     <div class="contact-box reveal">
       <a href="mailto:laladineie@gmail.com" style="display:block;">
@@ -496,7 +472,7 @@
       </a>
       <div class="contact-line">
         <span class="contact-label">Statut</span>
-        <span class="contact-value">Réponse en moins de 48h, généralement</span>
+        <span class="contact-value">réponse en -48h, généralement</span>
       </div>
     </div>
   </section>
@@ -504,7 +480,7 @@
 </main>
 
 <footer>
-  bloom.dev — construit avec du café tiède et un doute raisonnable, © 2026
+  bloom.dev — fait avec du café tiède, © 2026
 </footer>
 
 <div class="lightbox" id="lightbox">
@@ -615,7 +591,6 @@
       carousel.appendChild(next);
       carousel.appendChild(dotsWrap);
 
-      // swipe tactile
       let startX = 0, deltaX = 0, dragging = false;
       track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; dragging = true; }, { passive: true });
       track.addEventListener('touchmove', e => { if(dragging) deltaX = e.touches[0].clientX - startX; }, { passive: true });
@@ -638,7 +613,6 @@
       if(found) slides.push(found); else break;
     }
     if(slides.length > 0) buildCarousel(box, slides);
-    // sinon le placeholder "Preview à venir" reste affiché
   });
 
   // Lightbox
@@ -695,7 +669,6 @@
     if(e.key === 'ArrowLeft') lbGoTo(lbIndex - 1);
   });
 
-  // swipe tactile dans le lightbox
   let lbStartX = 0, lbDeltaX = 0, lbDragging = false;
   lightboxContent.addEventListener('touchstart', e => { lbStartX = e.touches[0].clientX; lbDragging = true; }, { passive: true });
   lightboxContent.addEventListener('touchmove', e => { if(lbDragging) lbDeltaX = e.touches[0].clientX - lbStartX; }, { passive: true });
