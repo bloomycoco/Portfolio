@@ -173,15 +173,47 @@
   .project-media{
     margin-top:18px; border-radius:4px; overflow:hidden;
     border:1px solid var(--line); background:#000;
-    aspect-ratio:16/9; display:flex; align-items:center; justify-content:center;
-  }
-  .project-media img, .project-media video{
-    width:100%; height:100%; object-fit:cover; display:block;
+    aspect-ratio:16/9; position:relative;
   }
   .project-media.empty{
+    display:flex; align-items:center; justify-content:center;
     color:var(--sage); font-size:0.74rem; flex-direction:column; gap:6px;
     background:repeating-linear-gradient(45deg, var(--bg-card), var(--bg-card) 10px, #1f1f22 10px, #1f1f22 20px);
   }
+
+  .carousel{ position:relative; width:100%; height:100%; overflow:hidden; }
+  .carousel-track{
+    display:flex; height:100%; transition:transform 0.35s ease;
+    touch-action:pan-y;
+  }
+  .carousel-slide{
+    flex:0 0 100%; height:100%; display:flex; align-items:center; justify-content:center;
+  }
+  .carousel-slide img, .carousel-slide video{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .carousel-arrow{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:5;
+    width:34px; height:34px; border-radius:50%;
+    background:rgba(26,26,29,0.65); border:1px solid var(--line);
+    color:var(--cream); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:1rem; transition:background 0.25s, border-color 0.25s;
+    user-select:none;
+  }
+  .carousel-arrow:hover{ background:var(--rust); border-color:var(--rust); }
+  .carousel-arrow.prev{ left:10px; }
+  .carousel-arrow.next{ right:10px; }
+  .carousel-dots{
+    position:absolute; bottom:10px; left:0; right:0; z-index:5;
+    display:flex; justify-content:center; gap:7px;
+  }
+  .carousel-dot{
+    width:7px; height:7px; border-radius:50%; background:rgba(232,227,216,0.35);
+    cursor:pointer; transition:background 0.25s, transform 0.25s; border:none;
+  }
+  .carousel-dot.active{ background:var(--rust); transform:scale(1.25); }
+  .carousel:has(.carousel-slide:only-child) .carousel-arrow,
+  .carousel:has(.carousel-slide:only-child) .carousel-dots{ display:none; }
 
   /* CONTACT */
   .contact-box{
@@ -307,7 +339,7 @@
       </div>
       <div class="project-media empty" data-project="reticule">
         <span>📷 Preview à venir</span>
-        <span>assets/reticule.jpg</span>
+        <span>assets/reticule-1.jpg</span>
       </div>
     </div>
 
@@ -328,7 +360,7 @@
       </div>
       <div class="project-media empty" data-project="arenes">
         <span>📷 Preview à venir</span>
-        <span>assets/arenes.jpg</span>
+        <span>assets/arenes-1.jpg</span>
       </div>
     </div>
 
@@ -349,7 +381,7 @@
       </div>
       <div class="project-media empty" data-project="medailles">
         <span>📷 Preview à venir</span>
-        <span>assets/medailles.jpg</span>
+        <span>assets/medailles-1.jpg</span>
       </div>
     </div>
 
@@ -370,7 +402,7 @@
       </div>
       <div class="project-media empty" data-project="radioadmin">
         <span>📷 Preview à venir</span>
-        <span>assets/radioadmin.jpg</span>
+        <span>assets/radioadmin-1.jpg</span>
       </div>
     </div>
 
@@ -414,47 +446,116 @@
   }, { threshold: 0.15 });
   reveals.forEach(el => obs.observe(el));
 
-  // Détection automatique des previews : essaie .jpg, .png, .mp4 dans assets/
-  document.querySelectorAll('.project-media[data-project]').forEach(box => {
-    const name = box.dataset.project;
-    const candidates = [
-      { ext: 'jpg', tag: 'img' },
-      { ext: 'jpeg', tag: 'img' },
-      { ext: 'png', tag: 'img' },
-      { ext: 'webp', tag: 'img' },
-      { ext: 'mp4', tag: 'video' },
-      { ext: 'webm', tag: 'video' }
-    ];
+  // Carrousel : cherche jusqu'à 5 médias par projet, ex: reticule-1.jpg, reticule-2.mp4...
+  const MEDIA_EXT = [
+    { ext: 'jpg', tag: 'img' }, { ext: 'jpeg', tag: 'img' },
+    { ext: 'png', tag: 'img' }, { ext: 'webp', tag: 'img' },
+    { ext: 'mp4', tag: 'video' }, { ext: 'webm', tag: 'video' }
+  ];
+  const MAX_SLIDES = 5;
 
-    function tryNext(i){
-      if(i >= candidates.length) return; // rien trouvé, on garde le placeholder
-      const c = candidates[i];
-      const url = `assets/${name}.${c.ext}`;
-      if(c.tag === 'img'){
+  function probe(url, tag){
+    return new Promise(resolve => {
+      if(tag === 'img'){
         const img = new Image();
-        img.onload = () => {
-          box.classList.remove('empty');
-          box.innerHTML = '';
-          img.alt = name;
-          box.appendChild(img);
-        };
-        img.onerror = () => tryNext(i + 1);
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
         img.src = url;
       } else {
-        const video = document.createElement('video');
-        video.src = url;
-        video.muted = true;
-        video.controls = true;
-        video.playsInline = true;
-        video.onloadeddata = () => {
-          box.classList.remove('empty');
-          box.innerHTML = '';
-          box.appendChild(video);
-        };
-        video.onerror = () => tryNext(i + 1);
+        const v = document.createElement('video');
+        v.onloadeddata = () => resolve(true);
+        v.onerror = () => resolve(false);
+        v.src = url;
       }
+    });
+  }
+
+  async function findSlide(name, index){
+    for(const c of MEDIA_EXT){
+      const url = `assets/${name}-${index}.${c.ext}`;
+      if(await probe(url, c.tag)) return { url, tag: c.tag };
     }
-    tryNext(0);
+    return null;
+  }
+
+  function buildCarousel(box, slides){
+    box.classList.remove('empty');
+    box.innerHTML = '';
+    const carousel = document.createElement('div');
+    carousel.className = 'carousel';
+
+    const track = document.createElement('div');
+    track.className = 'carousel-track';
+    slides.forEach(s => {
+      const slide = document.createElement('div');
+      slide.className = 'carousel-slide';
+      const el = document.createElement(s.tag);
+      el.src = s.url;
+      if(s.tag === 'video'){ el.muted = true; el.controls = true; el.playsInline = true; }
+      slide.appendChild(el);
+      track.appendChild(slide);
+    });
+    carousel.appendChild(track);
+
+    let current = 0;
+    function goTo(i){
+      current = (i + slides.length) % slides.length;
+      track.style.transform = `translateX(-${current * 100}%)`;
+      dots.forEach((d, di) => d.classList.toggle('active', di === current));
+    }
+
+    if(slides.length > 1){
+      const prev = document.createElement('button');
+      prev.className = 'carousel-arrow prev';
+      prev.innerHTML = '‹';
+      prev.setAttribute('aria-label', 'Précédent');
+      prev.onclick = () => goTo(current - 1);
+
+      const next = document.createElement('button');
+      next.className = 'carousel-arrow next';
+      next.innerHTML = '›';
+      next.setAttribute('aria-label', 'Suivant');
+      next.onclick = () => goTo(current + 1);
+
+      const dotsWrap = document.createElement('div');
+      dotsWrap.className = 'carousel-dots';
+      var dots = slides.map((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', `Slide ${i + 1}`);
+        dot.onclick = () => goTo(i);
+        dotsWrap.appendChild(dot);
+        return dot;
+      });
+
+      carousel.appendChild(prev);
+      carousel.appendChild(next);
+      carousel.appendChild(dotsWrap);
+
+      // swipe tactile
+      let startX = 0, deltaX = 0, dragging = false;
+      track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; dragging = true; }, { passive: true });
+      track.addEventListener('touchmove', e => { if(dragging) deltaX = e.touches[0].clientX - startX; }, { passive: true });
+      track.addEventListener('touchend', () => {
+        if(Math.abs(deltaX) > 40){ goTo(current + (deltaX < 0 ? 1 : -1)); }
+        dragging = false; deltaX = 0;
+      });
+    } else {
+      var dots = [];
+    }
+
+    box.appendChild(carousel);
+  }
+
+  document.querySelectorAll('.project-media[data-project]').forEach(async box => {
+    const name = box.dataset.project;
+    const slides = [];
+    for(let i = 1; i <= MAX_SLIDES; i++){
+      const found = await findSlide(name, i);
+      if(found) slides.push(found); else break;
+    }
+    if(slides.length > 0) buildCarousel(box, slides);
+    // sinon le placeholder "Preview à venir" reste affiché
   });
 </script>
 
