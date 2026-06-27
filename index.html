@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloom — développeur</title>
+<meta name="description" content="Portfolio de Bloom, développeur.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #1a1a1d;
+    --bg-card: #232326;
+    --cream: #e8e3d8;
+    --cream-dim: #a8a39a;
+    --rust: #c44536;
+    --rust-dim: #8a3329;
+    --sage: #5a5d52;
+    --line: #34343a;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg);
+    color:var(--cream);
+    font-family:'Space Mono', monospace;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--rust); color:var(--cream); }
+
+  a{ color:inherit; text-decoration:none; }
+
+  .noise{
+    position:fixed; inset:0; pointer-events:none; z-index:1;
+    opacity:0.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap{ max-width:760px; margin:0 auto; padding:0 28px; position:relative; z-index:2; }
+
+  header.nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    backdrop-filter:blur(6px);
+    background:rgba(26,26,29,0.7);
+    border-bottom:1px solid var(--line);
+  }
+  header.nav .wrap{
+    display:flex; justify-content:space-between; align-items:center;
+    height:62px;
+  }
+  .logo{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:500;
+    font-size:1.15rem; letter-spacing:0.02em;
+  }
+  .logo span{ color:var(--rust); font-style:normal; }
+  nav.links{ display:flex; gap:28px; font-size:0.78rem; }
+  nav.links a{
+    color:var(--cream-dim); position:relative; transition:color 0.25s;
+  }
+  nav.links a:hover{ color:var(--cream); }
+  nav.links a::after{
+    content:''; position:absolute; left:0; bottom:-5px; width:0; height:1px;
+    background:var(--rust); transition:width 0.25s;
+  }
+  nav.links a:hover::after{ width:100%; }
+
+  /* HERO */
+  .hero{
+    min-height:92vh; display:flex; flex-direction:column; justify-content:center;
+    padding-top:62px;
+  }
+  .eyebrow{
+    font-size:0.78rem; color:var(--sage); letter-spacing:0.08em;
+    text-transform:uppercase; margin-bottom:18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{
+    content:''; width:7px; height:7px; border-radius:50%;
+    background:var(--rust); display:inline-block;
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  h1{
+    font-family:'Fraunces', serif; font-weight:400;
+    font-size:clamp(2.4rem, 6.5vw, 4.2rem);
+    line-height:1.05; letter-spacing:-0.01em;
+    margin-bottom:28px;
+  }
+  h1 .italic{ font-style:italic; color:var(--rust); font-weight:350; }
+  h1 .strike{
+    position:relative; color:var(--cream-dim); font-size:0.62em;
+    display:inline-block; margin:0 0.15em;
+  }
+  h1 .strike::after{
+    content:''; position:absolute; left:-2%; right:-2%; top:50%;
+    height:2px; background:var(--rust-dim); transform:rotate(-3deg);
+  }
+
+  .hero-sub{
+    font-size:1rem; color:var(--cream-dim); max-width:520px; margin-bottom:38px;
+  }
+  .hero-sub strong{ color:var(--cream); font-weight:700; }
+
+  .cta-row{ display:flex; gap:16px; flex-wrap:wrap; }
+  .btn{
+    font-family:'Space Mono', monospace; font-size:0.82rem;
+    padding:13px 24px; border-radius:3px; border:1px solid var(--line);
+    transition:all 0.25s; cursor:pointer; background:none;
+  }
+  .btn-primary{ background:var(--rust); border-color:var(--rust); color:var(--bg); font-weight:700; }
+  .btn-primary:hover{ background:var(--cream); border-color:var(--cream); }
+  .btn-ghost{ color:var(--cream-dim); }
+  .btn-ghost:hover{ border-color:var(--cream-dim); color:var(--cream); }
+
+  /* SECTION GENERIC */
+  section{ padding:90px 0; border-top:1px solid var(--line); }
+  .sec-head{ margin-bottom:48px; }
+  .sec-num{
+    font-size:0.75rem; color:var(--sage); display:block; margin-bottom:8px;
+  }
+  h2{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:400;
+    font-size:1.9rem; color:var(--cream);
+  }
+
+  /* ABOUT */
+  .about-grid{ display:grid; grid-template-columns:1fr; gap:28px; }
+  .about-text p{ color:var(--cream-dim); margin-bottom:18px; font-size:0.95rem; }
+  .about-text strong{ color:var(--cream); }
+  .tags{ display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
+  .tag{
+    font-size:0.74rem; padding:6px 12px; border:1px solid var(--line);
+    border-radius:20px; color:var(--cream-dim);
+  }
+
+  /* PROJECTS */
+  .project{
+    border:1px solid var(--line); border-radius:6px; padding:30px;
+    margin-bottom:22px; background:var(--bg-card);
+    transition:border-color 0.3s, transform 0.3s;
+    position:relative; overflow:hidden;
+  }
+  .project::before{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:var(--rust-dim); transition:background 0.3s;
+  }
+  .project:hover{ border-color:var(--sage); transform:translateX(4px); }
+  .project:hover::before{ background:var(--rust); }
+  .project-top{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:12px; gap:16px; flex-wrap:wrap;
+  }
+  .project-title{
+    font-family:'Fraunces', serif; font-size:1.25rem; font-weight:500;
+  }
+  .project-status{
+    font-size:0.7rem; color:var(--sage); white-space:nowrap;
+    text-transform:uppercase; letter-spacing:0.05em;
+  }
+  .project-desc{ color:var(--cream-dim); font-size:0.9rem; margin-bottom:16px; }
+  .project-stack{ display:flex; gap:8px; flex-wrap:wrap; }
+  .stack-item{
+    font-size:0.7rem; color:var(--sage); border:1px solid var(--line);
+    padding:3px 9px; border-radius:3px;
+  }
+
+  /* CONTACT */
+  .contact-box{
+    border:1px solid var(--line); border-radius:6px; padding:40px;
+    background:var(--bg-card); text-align:left;
+  }
+  .contact-line{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 0; border-bottom:1px solid var(--line);
+    font-size:0.9rem;
+  }
+  .contact-line:last-child{ border-bottom:none; }
+  .contact-label{ color:var(--sage); font-size:0.75rem; text-transform:uppercase; }
+  .contact-value{ color:var(--cream); transition:color 0.25s; }
+  .contact-line a:hover .contact-value{ color:var(--rust); }
+
+  footer{
+    padding:36px 0; text-align:center; font-size:0.74rem; color:var(--sage);
+    border-top:1px solid var(--line);
+  }
+
+  @media (max-width:640px){
+    nav.links{ display:none; }
+    section{ padding:64px 0; }
+    .contact-box{ padding:26px; }
+    .contact-line{ flex-direction:column; align-items:flex-start; gap:4px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+    html{ scroll-behavior:auto; }
+  }
+
+  :focus-visible{ outline:2px solid var(--rust); outline-offset:3px; }
+
+  .reveal{ opacity:0; transform:translateY(16px); transition:opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="logo">bloom<span>.</span>dev</div>
+    <nav class="links">
+      <a href="#about">à propos</a>
+      <a href="#work">projets</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero" style="border-top:none;">
+    <p class="eyebrow">disponible — théoriquement</p>
+    <h1>
+      Développeur. <span class="italic">Probablement</span> compétent.
+      <span class="strike">Sauve le monde</span><br>
+      Écrit du code qui marche, <em class="italic">parfois</em> du premier coup.
+    </h1>
+    <p class="hero-sub">
+      Je suis <strong>Bloom</strong>, développeur. Je construis des trucs qui fonctionnent,
+      je débogue des trucs qui ne devraient pas être cassés, et j'ai une relation
+      compliquée avec les deadlines.
+    </p>
+    <div class="cta-row">
+      <a href="#work" class="btn btn-primary">Voir le travail</a>
+      <a href="#contact" class="btn btn-ghost">Me contacter</a>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="sec-head">
+      <span class="sec-num">à propos</span>
+      <h2>Un peu de contexte, sans trop en faire</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>
+          Je développe des outils et systèmes sur mesure — souvent sous pression,
+          parfois sans trop savoir où ça va, mais ça finit par tenir debout.
+          <strong>J'aime comprendre comment les choses cassent</strong> avant de
+          comprendre comment elles marchent.
+        </p>
+        <p>
+          Pas du genre à sur-vendre un projet. Si quelque chose ne fonctionne pas
+          encore, je le dis. Si ça marche, je suis presque aussi surpris que vous.
+        </p>
+        <div class="tags">
+          <span class="tag">Backend</span>
+          <span class="tag">Automatisation</span>
+          <span class="tag">Systèmes</span>
+          <span class="tag">Débogage compulsif</span>
+          <span class="tag">Optimisation</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="sec-head">
+      <span class="sec-num">projets</span>
+      <h2>Des trucs que j'ai construits</h2>
+    </div>
+
+    <div class="project reveal">
+      <div class="project-top">
+        <span class="project-title">Système de gestion d'événements</span>
+        <span class="project-status">en prod</span>
+      </div>
+      <p class="project-desc">
+        Un système conçu pour suivre, déclencher et journaliser des événements en
+        temps réel, avec une attention particulière portée à la performance
+        et à la fiabilité quand tout le monde regarde en même temps.
+      </p>
+      <div class="project-stack">
+        <span class="stack-item">Backend</span>
+        <span class="stack-item">Optimisation perf</span>
+        <span class="stack-item">Logging</span>
+      </div>
+    </div>
+
+    <div class="project reveal">
+      <div class="project-top">
+        <span class="project-title">Outil de persistance & synchronisation</span>
+        <span class="project-status">stable</span>
+      </div>
+      <p class="project-desc">
+        Un module qui garde les données cohérentes entre les redémarrages et les
+        changements d'état — parce que perdre des données silencieusement,
+        c'est le pire genre de bug.
+      </p>
+      <div class="project-stack">
+        <span class="stack-item">Persistance JSON</span>
+        <span class="stack-item">Gestion d'état</span>
+        <span class="stack-item">Concurrence</span>
+      </div>
+    </div>
+
+    <div class="project reveal">
+      <div class="project-top">
+        <span class="project-title">Interface d'administration</span>
+        <span class="project-status">itération continue</span>
+      </div>
+      <p class="project-desc">
+        Une interface pensée pour donner du contrôle sans donner la migraine —
+        permissions granulaires, retours visuels clairs, zéro clic inutile.
+      </p>
+      <div class="project-stack">
+        <span class="stack-item">UI/UX</span>
+        <span class="stack-item">Permissions</span>
+        <span class="stack-item">Architecture modulaire</span>
+      </div>
+    </div>
+
+  </section>
+
+  <section id="contact">
+    <div class="sec-head">
+      <span class="sec-num">contact</span>
+      <h2>On peut parler, si vous voulez</h2>
+    </div>
+    <div class="contact-box reveal">
+      <a href="mailto:contact@example.com" style="display:block;">
+        <div class="contact-line">
+          <span class="contact-label">Email</span>
+          <span class="contact-value">contact@example.com</span>
+        </div>
+      </a>
+      <a href="https://github.com/" target="_blank" style="display:block;">
+        <div class="contact-line">
+          <span class="contact-label">GitHub</span>
+          <span class="contact-value">github.com/tonpseudo</span>
+        </div>
+      </a>
+      <div class="contact-line">
+        <span class="contact-label">Statut</span>
+        <span class="contact-value">Réponse en moins de 48h, généralement</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  bloom.dev — construit avec du café tiède et un doute raisonnable, © 2026
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
