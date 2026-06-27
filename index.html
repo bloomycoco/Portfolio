@@ -220,6 +220,25 @@
     cursor:pointer; transition:background 0.25s, border-color 0.25s;
   }
   .lightbox-close:hover{ background:var(--rust); border-color:var(--rust); }
+
+  .lightbox-arrow{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:1001;
+    width:52px; height:52px; border-radius:50%;
+    background:rgba(35,35,38,0.7); border:1px solid var(--line);
+    color:#fff; font-size:1.7rem; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background 0.25s, border-color 0.25s, transform 0.25s;
+    user-select:none;
+  }
+  .lightbox-arrow:hover{ background:var(--rust); border-color:var(--rust); }
+  .lightbox-arrow.prev{ left:18px; }
+  .lightbox-arrow.next{ right:18px; }
+  .lightbox.single .lightbox-arrow{ display:none; }
+
+  @media (max-width:640px){
+    .lightbox-arrow{ width:42px; height:42px; font-size:1.4rem; }
+    .lightbox-arrow.prev{ left:8px; }
+    .lightbox-arrow.next{ right:8px; }
+  }
   .carousel-arrow{
     position:absolute; top:50%; transform:translateY(-50%); z-index:5;
     width:34px; height:34px; border-radius:50%;
@@ -490,7 +509,9 @@
 
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="Fermer">✕</button>
+  <button class="lightbox-arrow prev" id="lightboxPrev" aria-label="Précédent">‹</button>
   <div class="lightbox-content" id="lightboxContent"></div>
+  <button class="lightbox-arrow next" id="lightboxNext" aria-label="Suivant">›</button>
 </div>
 
 <script>
@@ -548,12 +569,11 @@
       if(s.tag === 'video'){ el.muted = true; el.controls = true; el.playsInline = true; }
       el.addEventListener('click', (e) => {
         if(s.tag === 'video'){
-          // évite d'ouvrir le lightbox si on clique sur les contrôles natifs en bas de la vidéo
           const rect = el.getBoundingClientRect();
           if(e.clientY > rect.bottom - 36) return;
           el.pause();
         }
-        openLightbox(s);
+        openLightbox(slides, slides.indexOf(s));
       });
       slide.appendChild(el);
       track.appendChild(slide);
@@ -625,13 +645,26 @@
   const lightbox = document.getElementById('lightbox');
   const lightboxContent = document.getElementById('lightboxContent');
   const lightboxClose = document.getElementById('lightboxClose');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
 
-  function openLightbox(slide){
+  let lbSlides = [];
+  let lbIndex = 0;
+
+  function renderLightbox(){
+    const slide = lbSlides[lbIndex];
     lightboxContent.innerHTML = '';
     const el = document.createElement(slide.tag);
     el.src = slide.url;
     if(slide.tag === 'video'){ el.controls = true; el.autoplay = true; el.playsInline = true; }
     lightboxContent.appendChild(el);
+    lightbox.classList.toggle('single', lbSlides.length <= 1);
+  }
+
+  function openLightbox(slides, index){
+    lbSlides = slides;
+    lbIndex = index;
+    renderLightbox();
     lightbox.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -644,9 +677,32 @@
     setTimeout(() => { lightboxContent.innerHTML = ''; }, 250);
   }
 
+  function lbGoTo(i){
+    const media = lightboxContent.querySelector('video');
+    if(media) media.pause();
+    lbIndex = (i + lbSlides.length) % lbSlides.length;
+    renderLightbox();
+  }
+
   lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', () => lbGoTo(lbIndex - 1));
+  lightboxNext.addEventListener('click', () => lbGoTo(lbIndex + 1));
   lightbox.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
-  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if(!lightbox.classList.contains('open')) return;
+    if(e.key === 'Escape') closeLightbox();
+    if(e.key === 'ArrowRight') lbGoTo(lbIndex + 1);
+    if(e.key === 'ArrowLeft') lbGoTo(lbIndex - 1);
+  });
+
+  // swipe tactile dans le lightbox
+  let lbStartX = 0, lbDeltaX = 0, lbDragging = false;
+  lightboxContent.addEventListener('touchstart', e => { lbStartX = e.touches[0].clientX; lbDragging = true; }, { passive: true });
+  lightboxContent.addEventListener('touchmove', e => { if(lbDragging) lbDeltaX = e.touches[0].clientX - lbStartX; }, { passive: true });
+  lightboxContent.addEventListener('touchend', () => {
+    if(Math.abs(lbDeltaX) > 40) lbGoTo(lbIndex + (lbDeltaX < 0 ? 1 : -1));
+    lbDragging = false; lbDeltaX = 0;
+  });
 </script>
 
 </body>
